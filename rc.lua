@@ -20,7 +20,7 @@ local lain          = require("lain")
 local freedesktop   = require("freedesktop")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local debug         = require("lib.debug")
-local xrandr         = require("lib.xrandr")
+local xrandr        = require("lib.xrandr")
 -- }}}
 
 -- {{{ Error handling
@@ -224,6 +224,13 @@ awful.util.mymainmenu = freedesktop.menu.build({
 --menubar.utils.terminal = terminal -- Set the Menubar terminal for applications that require it
 -- }}}
 
+local wallpaper = function(s)
+    local f = io.popen("sh -c \"find ${HOME}/wallpapers -name '*.jpg' -o -name '*.png' | shuf -n 1 | xargs echo -n\"")
+    local w = f:read("*all")
+    f:close()
+    gears.wallpaper.maximized(w, s, true)
+end
+
 -- {{{ Screen
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", function(s)
@@ -237,6 +244,18 @@ screen.connect_signal("property::geometry", function(s)
         gears.wallpaper.maximized(wallpaper, s, true)
     end
 end)
+
+wallpaper_timer = timer { timeout = 0 }
+wallpaper_timer:connect_signal("timeout", function()
+    for s in screen do
+        wallpaper(s)
+    end
+    wallpaper_timer:stop()
+    wallpaper_timer.timeout = math.random(3000, 3600)
+    wallpaper_timer:start()
+end)
+wallpaper_timer:start()
+
 -- Create a wibox for each screen and add it
 awful.screen.connect_for_each_screen(function(s) beautiful.at_screen_connect(s) end)
 -- }}}
