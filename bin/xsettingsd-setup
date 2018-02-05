@@ -23,4 +23,4 @@ else
 fi
 
 # Also use xrdb for very old stuff (you know, LibreOffice)
-echo Xft.dpi: $dpi | xrdb -merge
+echo Xft.dpi: $dpi
