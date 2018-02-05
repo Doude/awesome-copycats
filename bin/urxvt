@@ -8,4 +8,4 @@ case $(hostname),$(xrandr --current | \
     *) font_size=12 ;;
 esac
 
-urxvt -fn "xft:DejaVu Sans Mono-${font_size},xft:DejaVu Sans Mono for Powerline-${font_size}"&
+urxvt -fn "xft:DejaVu Sans Mono-${font_size},xft:DejaVu Sans Mono for Powerline-${font_size}" $@&

@@ -62,6 +62,12 @@ theme.widget_mem                                = theme.dir .. "/icons/mem.png"
 theme.widget_cpu                                = theme.dir .. "/icons/cpu.png"
 theme.widget_temp                               = theme.dir .. "/icons/temp.png"
 theme.widget_net                                = theme.dir .. "/icons/net.png"
+theme.widget_net_ethernet                       = theme.dir .. "/icons/ethernet-connected.png"
+theme.widget_net_wifi_disconnected              = theme.dir .. "/icons/wireless-disconnected.png"
+theme.widget_net_wifi_weak                      = theme.dir .. "/icons/wireless-low.png"
+theme.widget_net_wifi_mid                       = theme.dir .. "/icons/wireless-medium.png"
+theme.widget_net_wifi_good                      = theme.dir .. "/icons/wireless-high.png"
+theme.widget_net_wifi_great                     = theme.dir .. "/icons/wireless-full.png"
 theme.widget_hdd                                = theme.dir .. "/icons/hdd.png"
 theme.widget_music                              = theme.dir .. "/icons/note.png"
 theme.widget_music_on                           = theme.dir .. "/icons/note_on.png"
@@ -297,12 +303,39 @@ local bat = lain.widget.bat({
 })
 
 -- Net
-local neticon = wibox.widget.imagebox(theme.widget_net)
-local net = lain.widget.net({
+local neticon = wibox.widget.imagebox(theme.widget_net_wifi_disconnected)
+local net = lain.widget.net {
+    notify = "off",
+    wifi_state = "on",
+    ethernet_state = "on",
     settings = function()
+        local ethernet = net_now.devices.eth0
+        if ethernet then
+            if ethernet.ethernet then
+                neticon:set_image(theme.widget_net_ethernet)
+            end
+        end
+
+        local wifi = net_now.devices.wlp3s0
+        if wifi then
+            if wifi.wifi then
+                local signal = wifi.signal
+                if signal < -83 then
+                    neticon:set_image(theme.widget_net_wifi_weak)
+                elseif signal < -70 then
+                    neticon:set_image(theme.widget_net_wifi_mid)
+                elseif signal < -53 then
+                    neticon:set_image(theme.widget_net_wifi_good)
+                elseif signal >= -53 then
+                    neticon:set_image(theme.widget_net_wifi_great)
+                end
+            end
+        end
         widget:set_markup(markup.fontfg(theme.font, "#FEFEFE", " " .. net_now.received .. " ↓↑ " .. net_now.sent .. " "))
     end
-})
+}
+neticon:connect_signal("button::press", function() awful.spawn(string.format("%s -e wavemon", awful.util.terminal)) end)
+
 
 -- Separators
 local arrow = separators.arrow_left
