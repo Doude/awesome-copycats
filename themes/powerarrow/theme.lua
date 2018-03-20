@@ -308,8 +308,9 @@ local net = lain.widget.net {
     notify = "off",
     wifi_state = "on",
     ethernet_state = "on",
+    iface = {'enp11s0', 'wlp3s0'},
     settings = function()
-        local ethernet = net_now.devices.eth0
+        local ethernet = net_now.devices.enp11s0
         if ethernet then
             if ethernet.ethernet then
                 neticon:set_image(theme.widget_net_ethernet)

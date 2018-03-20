@@ -10,41 +10,9 @@ export LC_MESSAGES=en_US.utf8
 # Ensure we use the appropriate gtkrc-2.0 file
 export GTK2_RC_FILES=$HOME/.gtkrc-2.0
 
-# Java incompatibility with awesome
-export _JAVA_AWT_WM_NONREPARENTING=1
-
-# We do not want to rely on crappy mailcap
-export MAILCAPS=$HOME/.mailcap
-
-# Workaround a bug in XI focus-in events. See:
-#  https://bugzilla.gnome.org/show_bug.cgi?id=677329
-export GDK_CORE_DEVICE_EVENTS=1
-
-# Environment variables
-[ -e ~/.zsh/env ] && . ~/.zsh/env
-
-# GDM move Xauthority in some obscure place
-# See:
-#  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=614972
-#  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=586685
-#[ "$XAUTHORITY" = $HOME/.Xauthority ] || {
-#    XAUTHORITY=$HOME/.Xauthority xauth merge $XAUTHORITY
-#    export XAUTHORITY=$HOME/.Xauthority
-#}
-
 #export GDK_SCALE=2
 
-case "$(hostname)" in
-    neo)
-        xrandr --output HDMI1 --auto --output HDMI2 --auto --right-of HDMI1
-        ;;
-    laptop)
-        xrandr --output DVI-0 --auto --primary --output DisplayPort-0 --auto --right-of DVI-0
-        ;;
-    macbook)
-        xrandr --output eDP1 --auto --dpi 220
-        ;;
-esac
+xrandr --output eDP1 --auto --dpi 220
 
 /usr/bin/ssh-add $HOME/.ssh/id_rsa < /dev/null
 . /home/doude/.config/awesome/bin/xsettingsd-setup

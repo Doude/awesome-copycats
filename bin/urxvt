@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-case $(hostname),$(xrandr --current | \
+case $(xrandr --current | \
                           sed -n 's/\([^ ]*\) connected .*[0-9][0-9]*x[0-9][0-9]*+[0-9][0-9]*+[0-9][0-9]* .*/\1/p' | \
                           sort | tr '\n' ':') in
-    macbook,eDP1:) font_size=8 ;;
-    macbook,HDMI3:) font_size=12 ;;
-    *) font_size=12 ;;
+    eDP1:) font_size=8 ;;
+    DPI:) font_size=6 ;;
+    HDMI3:) font_size=12 ;;
+    DP2:eDP1:) font_size=8 ;;
+    *) font_size=8 ;;
 esac
 
 urxvt -fn "xft:DejaVu Sans Mono-${font_size},xft:DejaVu Sans Mono for Powerline-${font_size}" $@&

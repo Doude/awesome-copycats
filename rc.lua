@@ -21,6 +21,8 @@ local freedesktop   = require("freedesktop")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local debug         = require("lib.debug")
 local xrandr        = require("lib.xrandr")
+local timer         = require("gears.timer")
+
 -- }}}
 
 -- {{{ Error handling
