@@ -18,13 +18,15 @@ xrandr --output eDP1 --auto --dpi 220
 . /home/doude/.config/awesome/bin/xsettingsd-setup
 /home/doude/.config/awesome/bin/xss-lock start &
 #inputplug -0 -c ~/.config/awesome/bin/input-event 2> /dev/null
-rfkill block bluetooth 2> /dev/null
+rfkill unblock bluetooth 2> /dev/null
+blueman-applet 2> /dev/null &
 xbacklight = 60 2> /dev/null
-redshift-gtk 2> /dev/null &
+# redshift-gtk 2> /dev/null &
 # [ -x /usr/sbin/rfkill ] && rfkill unblock 0 2> /dev/null
 # [ -x /usr/sbin/rfkill ] && rfkill block 1 2> /dev/null
 # [ -x /usr/bin/xbacklight ] && xbacklight = 60 2> /dev/null
 # [ -x /usr/bin/redshift ] && redshift -l 2.3508:48.8567 -t 6500:5500 2> /dev/null &
 # [ -x /usr/bin/slack ] && slack 2> /dev/null &
+xbindkeys
 
 exec awesome

@@ -2,12 +2,13 @@
 
 # Don't try to guess DPI. For a laptop, we don't want the same DPI as
 # for an external screen. Just hardcode stuff...
-case $(xrandr --current | sed -n 's/\([^ ]*\) connected .*[0-9][0-9]*x[0-9][0-9]*+[0-9][0-9]*+[0-9][0-9]* .*/\1/p' | sort | tr '\n' ':') in
-    eDP1:) dpi=220 ;;
-    HDMI3:) dpi=96 ;;
-    DP2:eDP1:) dpi=144 ;;
-    *) dpi=96 ;;
-esac
+# case $(xrandr --current | sed -n 's/\([^ ]*\) connected .*[0-9][0-9]*x[0-9][0-9]*+[0-9][0-9]*+[0-9][0-9]* .*/\1/p' | sort | tr '\n' ':') in
+#     eDP1:) dpi=220 ;;
+#     HDMI3:) dpi=96 ;;
+#     DP2:eDP1:) dpi=144 ;;
+#     *) dpi=96 ;;
+# esac
+dpi=96
 
 # Build xsettingsd.local
 cp  ~/.config/awesome/xsettingsd ~/.config/awesome/xsettingsd.local

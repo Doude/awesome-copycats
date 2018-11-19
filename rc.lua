@@ -698,7 +698,7 @@ awful.rules.rules = {
 
     -- Set Firefox to always map on the 'www' tag.
     { rule = { class = "Firefox" },
-      properties = { screen = 1, tag = awful.util.tagnames[1] } },
+      properties = { screen = awful.screen.focused(), tag = awful.util.tagnames[1] } },
 
     -- Set Thunderbird to always map on the 'mail' tag.
     { rule = { class = "Thunderbird" },
@@ -713,8 +713,8 @@ awful.rules.rules = {
     properties = { screen = 1, tag = awful.util.tagnames[3] } },
 
     -- Set Visual Studio to always map on the 'dev' tag.
-    { rule = { class = "Code" },
-    properties = { screen = 1, tag = awful.util.tagnames[4] } },
+    { rule = { class = "code" },
+    properties = { screen = awful.screen.focused(), tag = awful.util.tagnames[4] } },
 
     { rule = { class = "Gimp", role = "gimp-image-window" },
           properties = { maximized = true } },

@@ -58,12 +58,23 @@ local function menu()
     local choices = arrange(out)
 
     for _, choice in pairs(choices) do
-        local cmd = "xrandr --auto"
+        local sacale_factor = 1.67 --1.8
+        local cmd = "xrandr --dpi 220"
         -- Enabled outputs
         for i, o in pairs(choice) do
             cmd = cmd .. " --output " .. o .. " --auto"
+            if choice[i] ~= "eDP1" then
+                cmd = cmd .. " --scale ".. sacale_factor .."x" .. sacale_factor
+            end
+            if i == 0 then
+                cmd = cmd .. " --pos 0x0"
+            end
             if i > 1 then
-                cmd = cmd .. " --right-of " .. choice[i-1]-- .. " --scale 1.5x1.67 --panning 2880x1800+2880+0"
+                if choice[i] ~= "eDP1" then
+                    cmd = cmd .. " --right-of " .. choice[i-1]
+                else
+                    cmd = cmd .. " --pos " .. math.floor(1920*sacale_factor) .. "x0"
+                end
             end
         end
         -- Disabled outputs
@@ -73,13 +84,17 @@ local function menu()
             end
         end
 
+        -- file = io.open('/tmp/awesome_xrandr_commands.txt', 'a')
+        -- -- file:write("Command: ")
+        -- file:write(cmd, "\n")
+
         local label = ""
         if #choice == 1 then
             label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
         else
             for i, o in pairs(choice) do
                 if i > 1 then
-                    label = label .. " + " 
+                    label = label .. " + "
                 end
                 label = label .. '<span weight="bold">' .. o .. '</span>'
             end
