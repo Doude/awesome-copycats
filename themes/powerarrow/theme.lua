@@ -162,11 +162,6 @@ theme.mail = lain.widget.imap({
 --]]
 
 -- ALSA volume
-theme.volume = lain.widget.alsabar({
-    --togglechannel = "IEC958,3",
-    notification_preset = { font = "xos4 Terminus 10", fg = theme.fg_normal },
-})
---[[
 local volicon = wibox.widget.imagebox()
 theme.volume = lain.widget.alsabar({
     --togglechannel = "IEC958,3",
@@ -212,8 +207,8 @@ volicon:buttons(awful.util.table.join (
             theme.volume.notify()
           end)
 ))
---]]
 
+--[[
 -- MPD
 local musicplr = awful.util.terminal .. " -title Music -g 130x34-320+16 -e ncmpcpp"
 local mpdicon = wibox.widget.imagebox(theme.widget_music)
@@ -232,7 +227,22 @@ mpdicon:buttons(my_table.join(
         theme.mpd.update()
     end)))
 theme.mpd = lain.widget.mpd({
-
+    settings = function()
+        if mpd_now.state == "play" then
+            artist = " " .. mpd_now.artist .. " "
+            title  = mpd_now.title  .. " "
+            mpdicon:set_image(theme.widget_music_on)
+            widget:set_markup(markup.font(theme.font, markup("#FF8466", artist) .. " " .. title))
+        elseif mpd_now.state == "pause" then
+            widget:set_markup(markup.font(theme.font, " mpd paused "))
+            mpdicon:set_image(theme.widget_music_pause)
+        else
+            widget:set_text("")
+            mpdicon:set_image(theme.widget_music)
+        end
+    end
+})
+--]]
 
 -- MEM
 local memicon = wibox.widget.imagebox(theme.widget_mem)
@@ -246,7 +256,8 @@ local mem = lain.widget.mem({
 local cpuicon = wibox.widget.imagebox(theme.widget_cpu)
 local cpu = lain.widget.cpu({
     settings = function()
-        widget:set_markup(markup.font(theme.font, " " .. cpu_now.usage .. "% "))
+        widget:set_markup(markup.fontfg(theme.font, "#000000", " " .. cpu_now.usage .. "% "))
+        --widget:set_markup(markup.font(theme.font, " " .. cpu_now.usage .. "% "))
     end
 })
 
@@ -262,6 +273,7 @@ end)
 --]]
 -- Coretemp (lain, average)
 local temp = lain.widget.temp({
+    tempfile = '/sys/class/thermal/thermal_zone2/temp',
     settings = function()
         widget:set_markup(markup.font(theme.font, " " .. coretemp_now .. "°C "))
     end
@@ -271,26 +283,26 @@ local tempicon = wibox.widget.imagebox(theme.widget_temp)
 
 -- / fs
 local fsicon = wibox.widget.imagebox(theme.widget_hdd)
---[[ commented because it needs Gio/Glib >= 2.54
 theme.fs = lain.widget.fs({
+    partition = '/',
     notification_preset = { fg = theme.fg_normal, bg = theme.bg_normal, font = "xos4 Terminus 10" },
     settings = function()
         local fsp = string.format(" %3.2f %s ", fs_now["/"].free, fs_now["/"].units)
         widget:set_markup(markup.font(theme.font, fsp))
     end
 })
---]]
 
 -- Battery
 local baticon = wibox.widget.imagebox(theme.widget_battery)
 local bat = lain.widget.bat({
-    ac = "ADP1",
+--    ac = "BAT0",
+    full_notify = "off",
     settings = function()
         if bat_now.status and bat_now.status ~= "N/A" then
             if bat_now.ac_status == 1 then
-                widget:set_markup(markup.font(theme.font, " AC "))
+--                widget:set_markup(markup.font(theme.font, " AC "))
                 baticon:set_image(theme.widget_ac)
-                return
+--                return
             elseif not bat_now.perc and tonumber(bat_now.perc) <= 5 then
                 baticon:set_image(theme.widget_battery_empty)
             elseif not bat_now.perc and tonumber(bat_now.perc) <= 15 then
@@ -311,30 +323,26 @@ local neticon = wibox.widget.imagebox(theme.widget_net_wifi_disconnected)
 local net = lain.widget.net {
     notify = "off",
     wifi_state = "on",
-    ethernet_state = "on",
-    iface = {'enp11s0', 'wlp3s0'},
+    eth_state = "on",
+    iface = {'ens9', 'wlp3s0'},
     settings = function()
-        local ethernet = net_now.devices.enp11s0
-        if ethernet then
-            if ethernet.ethernet then
-                neticon:set_image(theme.widget_net_ethernet)
-            end
-        end
-
+        local ethernet = net_now.devices.ens9
         local wifi = net_now.devices.wlp3s0
-        if wifi then
-            if wifi.wifi then
-                local signal = wifi.signal
-                if signal < -83 then
-                    neticon:set_image(theme.widget_net_wifi_weak)
-                elseif signal < -70 then
-                    neticon:set_image(theme.widget_net_wifi_mid)
-                elseif signal < -53 then
-                    neticon:set_image(theme.widget_net_wifi_good)
-                elseif signal >= -53 then
-                    neticon:set_image(theme.widget_net_wifi_great)
-                end
+        if ethernet and ethernet.ethernet then
+            neticon:set_image(theme.widget_net_ethernet)
+        elseif wifi and wifi.wifi then
+            local signal = wifi.signal
+            if signal < -83 then
+                neticon:set_image(theme.widget_net_wifi_weak)
+            elseif signal < -70 then
+                neticon:set_image(theme.widget_net_wifi_mid)
+            elseif signal < -53 then
+                neticon:set_image(theme.widget_net_wifi_good)
+            elseif signal >= -53 then
+                neticon:set_image(theme.widget_net_wifi_great)
             end
+        else
+            neticon:set_image(theme.widget_net_wifi_disconnected)
         end
         widget:set_markup(markup.fontfg(theme.font, "#FEFEFE", " " .. net_now.received .. " ↓↑ " .. net_now.sent .. " "))
     end
@@ -350,7 +358,7 @@ function theme.powerline_rl(cr, width, height)
 
     -- Avoid going out of the (potential) clip area
     if arrow_depth < 0 then
-        width  =  width + 2*arrow_depth
+    width  =  width + 2*arrow_depth
         offset = -arrow_depth
     end
 
@@ -370,7 +378,8 @@ end
 
 function theme.at_screen_connect(s)
     -- Quake application
-    s.quake = lain.util.quake({ app = "urxvt -fn 'xft:DejaVu Sans Mono-8,xft:DejaVu Sans Mono for Powerline-8'" })
+--    s.quake = lain.util.quake({ app = "urxvt -fn 'xft:DejaVu Sans Mono-8,xft:DejaVu Sans Mono for Powerline-8'" })
+    s.quake = lain.util.quake({ app = awful.util.terminal })
 
     -- If wallpaper is a function, call it with the screen
     local wallpaper = theme.wallpaper
@@ -425,7 +434,11 @@ function theme.at_screen_connect(s)
             wibox.container.background(wibox.container.margin(wibox.widget { fsicon, theme.fs and theme.fs.widget, layout = wibox.layout.align.horizontal }, 3, 3), "#CB755B"),
             arrow("#CB755B", "#8DAA9A"),
 --]]
-            arrow("#4B696D", "#8DAA9A"),
+            arrow("#4B696D", "#4B3B51"),
+            wibox.container.background(wibox.container.margin(wibox.widget { tempicon, temp.widget, layout = wibox.layout.align.horizontal }, 4, 4), "#4B3B51"),
+            arrow("#4B3B51", "#CB755B"),
+            wibox.container.background(wibox.container.margin(wibox.widget { fsicon, theme.fs and theme.fs.widget, layout = wibox.layout.align.horizontal }, 3, 3), "#CB755B"),
+            arrow("#CB755B", "#8DAA9A"),
             wibox.container.background(wibox.container.margin(wibox.widget { baticon, bat.widget, layout = wibox.layout.align.horizontal }, 3, 3), "#8DAA9A"),
             arrow("#8DAA9A", "#C0C0A2"),
             wibox.container.background(wibox.container.margin(wibox.widget { nil, neticon, net.widget, layout = wibox.layout.align.horizontal }, 3, 3), "#C0C0A2"),
