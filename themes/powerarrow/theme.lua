@@ -113,12 +113,16 @@ local markup = lain.util.markup
 local separators = lain.util.separators
 
 -- Calendar
---local mytextclock = wibox.widget.textclock(markup("#FFFFFF", "%a %d %b, %H:%M"))
---mytextclock.font = theme.font
-    --cal = "cal --color=always",
+local mytextclock = wibox.widget.textclock(markup("#FFFFFF", "%a %d %b, %H:%M"))
+mytextclock.font = theme.font
+theme.cal = lain.widget.cal({
+    cal = "cal --color=always",
     attach_to = { mytextclock },
+    followtag = true,
+    three = true,
+--    icons = "/home/doude/.config/awesome/lain/icons/cal/black/",
     notification_preset = {
-        font = "xos4 Terminus 10",
+        font = theme.font,
         fg   = theme.fg_normal,
         bg   = theme.bg_normal
     }
