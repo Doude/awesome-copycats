@@ -110,9 +110,6 @@ local execute = {
 }
 os.execute(table.concat(execute, ";"))
 
--- Spawn a composoting manager
-awful.spawn("compton --backend glx --xrender-sync --xrender-sync-fence --vsync opengl-swc --paint-on-overlay", false)
-
 awful.util.terminal = terminal
 awful.util.tagnames = { "www", "mail", "chat", "dev", "other" }
 awful.layout.layouts = {

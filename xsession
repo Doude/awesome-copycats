@@ -29,4 +29,5 @@ xbacklight = 60 2> /dev/null
 # [ -x /usr/bin/slack ] && slack 2> /dev/null &
 xbindkeys
 
+compton --daemon --backend glx --xrender-sync-fence --vsync --paint-on-overlay
 exec awesome
